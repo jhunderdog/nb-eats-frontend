@@ -5,8 +5,9 @@ import { useForm } from "react-hook-form";
 import { FormError } from "../components/form-error";
 import nuberLogo from "../images/logo.svg";
 import { Button } from "../components/button";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { UserRole } from "../__generated__/globalTypes";
+import { createAccountMutation, createAccountMutationVariables } from "../__generated__/createAccountMutation";
 const CREATE_ACCOUNT_MUTATION = gql`
   mutation createAccountMutation($createAccountInput: CreateAccountInput!) {
     createAccount(input: $createAccountInput){
@@ -23,11 +24,36 @@ interface ICreateAccountForm {
 }
 
 export const CreateAccount = () => {
-  const {register, getValues, watch, errors, handleSubmit, formState} = useForm<ICreateAccountForm>({mode: "onChange", defaultValues: {role: UserRole.Client,}});
+  const {register, getValues, watch, errors, handleSubmit, formState} 
+  = useForm<ICreateAccountForm>({mode: "onChange", defaultValues: {role: UserRole.Client,}});
+  const history = useHistory();
+  const onCompleted = (data: createAccountMutation) => {
+    const {
+        createAccount: {ok}
+    } = data;
+    if(ok){
+        // redirect 
+        history.push("/login");
+    }
+  }
   
-  const [createAccountMutation] = useMutation(CREATE_ACCOUNT_MUTATION, { 
+  const [createAccountMutation, {loading, data:createAccountMutationResult}] = useMutation<
+  createAccountMutation, 
+  createAccountMutationVariables>(CREATE_ACCOUNT_MUTATION, { 
+      onCompleted,
   });
-  const onSubmit = () => {};
+  const onSubmit = () => {
+      if(!loading){
+          const { email ,password, role} = getValues();
+          createAccountMutation({
+              variables: {
+                  createAccountInput: {
+                    email, password, role
+                  }
+              }
+          })
+      }
+  };
   console.log(watch())
     return (
         <div className="h-screen flex items-center flex-col mt-10 lg:mt-28">
@@ -38,7 +64,7 @@ export const CreateAccount = () => {
           <img src={nuberLogo} className="w-52 mb-10"/>
           <h4 className="w-full font-medium text-left text-3xl mb-5">Let's get started</h4>
             <form onSubmit={handleSubmit(onSubmit)} className="grid gap-3 mt-5 w-full mb-3">
-              <input ref={register({required: "Email is required"})}
+              <input ref={register({required: "Email is required", pattern:/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ })}
                 name="email"
                 type="email"
                 required
@@ -46,6 +72,7 @@ export const CreateAccount = () => {
                 className="input"
               />
               {errors.email?.message && <FormError errorMessage={errors.email?.message}/>}
+              {errors.email?.type === "pattern" && <FormError errorMessage={"Please enter a valid email"}/>}
               <input ref={register({required: "Password is required", minLength: 8})}
                 name="password"
                 required
@@ -60,10 +87,10 @@ export const CreateAccount = () => {
               </select>
               <Button 
               canClick={formState.isValid} 
-              loading={false} 
+              loading={loading} 
               actionText={"Create Account"}
               />
-             
+             {createAccountMutationResult?.createAccount.error && <FormError errorMessage={createAccountMutationResult.createAccount.error}/>}
             </form>
             <div>
               Already have an account?{" "} 

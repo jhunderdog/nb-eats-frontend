@@ -7,6 +7,7 @@ import { loginMutation, loginMutationVariables } from "../__generated__/loginMut
 import nuberLogo from "../images/logo.svg";
 import { Button } from "../components/button";
 import { Link } from "react-router-dom";
+import { isLoggedInVar } from "../apollo";
 const LOGIN_MUTATION = gql`
   mutation loginMutation($loginInput: LoginInput!) {
     login(input: $loginInput) {
@@ -28,6 +29,7 @@ export const Login = () => {
     const { login: {ok, token} } = data;
     if(ok){
       console.log(token);
+      isLoggedInVar(true);
     }
   }
   
@@ -60,7 +62,7 @@ export const Login = () => {
           <img src={nuberLogo} className="w-52 mb-10"/>
           <h4 className="w-full font-medium text-left text-3xl mb-5">Welcome back</h4>
             <form onSubmit={handleSubmit(onSubmit)} className="grid gap-3 mt-5 w-full mb-3">
-              <input ref={register({required: "Email is required"})}
+              <input ref={register({required: "Email is required", pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/})}
                 name="email"
                 type="email"
                 required
@@ -68,6 +70,7 @@ export const Login = () => {
                 className="input"
               />
               {errors.email?.message && <FormError errorMessage={errors.email?.message}/>}
+              {errors.email?.type === "pattern" && <FormError errorMessage={"Please enter a valid email"}/>}
               <input ref={register({required: "Password is required", minLength: 8})}
                 name="password"
                 required
