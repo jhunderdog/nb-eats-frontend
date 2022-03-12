@@ -24,6 +24,7 @@
     "web-vitals": "^0.2.4",
     "autoprefixer": "^10.0.2",
     "@types/react-helmet": "^6.1.0",
+    "react-helmet-async": "^1.0.7",
     "react-helmet": "^6.1.0",
     "postcss": "^8.1.9",
     "rimraf": "^3.0.2"

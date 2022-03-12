@@ -1,13 +1,14 @@
 import {  gql, useMutation } from "@apollo/client";
 import React from "react"
-import Helmet from "react-helmet"
+import {Helmet} from "react-helmet-async"
 import { useForm } from "react-hook-form";
 import { FormError } from "../components/form-error";
 import nuberLogo from "../images/logo.svg";
 import { Button } from "../components/button";
 import { Link, useHistory } from "react-router-dom";
-import { UserRole } from "../__generated__/globalTypes";
+
 import { createAccountMutation, createAccountMutationVariables } from "../__generated__/createAccountMutation";
+import { UserRole } from "../__generated__/globalTypes";
 const CREATE_ACCOUNT_MUTATION = gql`
   mutation createAccountMutation($createAccountInput: CreateAccountInput!) {
     createAccount(input: $createAccountInput){
@@ -32,7 +33,7 @@ export const CreateAccount = () => {
         createAccount: {ok}
     } = data;
     if(ok){
-        // redirect 
+        alert("Account Created! Log in now!");
         history.push("/login");
     }
   }
@@ -64,7 +65,10 @@ export const CreateAccount = () => {
           <img src={nuberLogo} className="w-52 mb-10"/>
           <h4 className="w-full font-medium text-left text-3xl mb-5">Let's get started</h4>
             <form onSubmit={handleSubmit(onSubmit)} className="grid gap-3 mt-5 w-full mb-3">
-              <input ref={register({required: "Email is required", pattern:/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ })}
+              <input ref={register({
+              required: "Email is required",
+              pattern: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+            })}
                 name="email"
                 type="email"
                 required

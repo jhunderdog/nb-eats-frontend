@@ -1,13 +1,14 @@
 import {  gql, useMutation } from "@apollo/client";
 import React from "react"
-import Helmet from "react-helmet"
+import {Helmet} from "react-helmet-async"
 import { useForm } from "react-hook-form";
 import { FormError } from "../components/form-error";
 import { loginMutation, loginMutationVariables } from "../__generated__/loginMutation";
 import nuberLogo from "../images/logo.svg";
 import { Button } from "../components/button";
 import { Link } from "react-router-dom";
-import { isLoggedInVar } from "../apollo";
+import { authTokenVar, isLoggedInVar } from "../apollo";
+import { LOCALSTORAGE_TOKEN } from "../constants";
 const LOGIN_MUTATION = gql`
   mutation loginMutation($loginInput: LoginInput!) {
     login(input: $loginInput) {
@@ -27,8 +28,9 @@ export const Login = () => {
   const {register, getValues, errors, handleSubmit, formState} = useForm<ILoginForm>({mode: "onChange"});
   const onCompleted = (data: loginMutation) => {
     const { login: {ok, token} } = data;
-    if(ok){
-      console.log(token);
+    if(ok && token){
+      localStorage.setItem(LOCALSTORAGE_TOKEN, token);
+      authTokenVar(token);
       isLoggedInVar(true);
     }
   }
@@ -62,7 +64,10 @@ export const Login = () => {
           <img src={nuberLogo} className="w-52 mb-10"/>
           <h4 className="w-full font-medium text-left text-3xl mb-5">Welcome back</h4>
             <form onSubmit={handleSubmit(onSubmit)} className="grid gap-3 mt-5 w-full mb-3">
-              <input ref={register({required: "Email is required", pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/})}
+              <input ref={register({
+              required: "Email is required",
+              pattern: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+            })}
                 name="email"
                 type="email"
                 required
