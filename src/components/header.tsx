@@ -11,6 +11,14 @@ const faUserIcon = faUser as IconProp;
 export const Header:React.FC = () => {
     const { data } = useMe();
 return (
+  <>
+  {
+    !data?.me.verified && (
+      <div className="bg red-500 p-3 text-center text-xs text-white">
+        <span>Please verify your email.</span>
+      </div>
+    )
+  }
     <header className="py-4">
     <div className="w-full px-5 xl:px-0 max-w-screen-xl mx-auto flex justify-between items-center">
       <img src={nuberLogo} className="w-24" alt="Nuber Eats" />
@@ -21,6 +29,7 @@ return (
       </span>
     </div>
   </header>
+  </>
 );
 
 
