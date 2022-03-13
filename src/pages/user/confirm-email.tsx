@@ -1,6 +1,6 @@
 import { gql, useApolloClient, useMutation } from "@apollo/client";
 import React, { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { useMe } from "../../hooks/useMe";
 import { verifyEmail } from "../../__generated__/verifyEmail";
 
@@ -15,6 +15,7 @@ const VERIFY_EMAIL_MUTATION = gql`
 export const ConfirmEmail = () => {
     const { data: userData } = useMe();
     const client = useApolloClient();
+    const histroy = useHistory();
     const onCompleted = (data: verifyEmail) => {
         const {verifyEmail: { ok } } = data;
         if(ok && userData?.me.id){
@@ -28,7 +29,8 @@ export const ConfirmEmail = () => {
                 data: {
                     verified: true,
                 }
-            })
+            });
+            histroy.push("/")
         }
     }
     const [verifyEmail] = 
