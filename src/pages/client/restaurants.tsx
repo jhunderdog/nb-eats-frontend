@@ -1,5 +1,6 @@
 import { gql, useQuery } from "@apollo/client"
 import React, { useState } from "react"
+import { Helmet } from "react-helmet-async"
 import { useForm } from "react-hook-form"
 import { useHistory } from "react-router-dom"
 import { Restaurant } from "../../components/restaurant"
@@ -64,6 +65,9 @@ export const Restaurants = () => {
     console.log(data);
     // console.log(error);
     return <div>
+        <Helmet>
+            <title>Home | Nuber Eats</title>
+        </Helmet>
         <form onSubmit={handleSubmit(onSearchSubmit)}
         className="bg-gray-800 w-full py-40 flex items-center justify-center">
             
