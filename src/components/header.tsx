@@ -10,7 +10,7 @@ const faUserIcon = faUser as IconProp;
 
 export const Header:React.FC = () => {
     const { data } = useMe();
-    
+    console.log(data);
 return (
   <>
   {
