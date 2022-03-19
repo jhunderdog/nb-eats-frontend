@@ -9,7 +9,7 @@ import { Button } from "../components/button";
 import { Link } from "react-router-dom";
 import { authTokenVar, isLoggedInVar } from "../apollo";
 import { LOCALSTORAGE_TOKEN } from "../constants";
-const LOGIN_MUTATION = gql`
+export const LOGIN_MUTATION = gql`
   mutation loginMutation($loginInput: LoginInput!) {
     login(input: $loginInput) {
       ok
@@ -27,7 +27,10 @@ interface ILoginForm {
 export const Login = () => {
   const {register, getValues, errors, handleSubmit, formState} = useForm<ILoginForm>({mode: "onChange"});
   const onCompleted = (data: loginMutation) => {
-    const { login: {ok, token} } = data;
+    const { 
+      login: {ok, token} 
+    } = data;
+    console.log(data);
     if(ok && token){
       localStorage.setItem(LOCALSTORAGE_TOKEN, token);
       authTokenVar(token);
@@ -84,7 +87,7 @@ export const Login = () => {
                 className="input" 
               />
               {errors.password?.message && <FormError errorMessage={errors.password?.message} />}
-              {errors.password?.type === "minLength" && <FormError errorMessage="Password must be more than 10 chars."/>}
+              
               <Button canClick={formState.isValid} loading={loading} actionText={"Log in"}/>
               {loginMutationResult?.login.error && <FormError errorMessage={loginMutationResult.login.error}/>}
             </form>
