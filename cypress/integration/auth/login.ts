@@ -21,14 +21,12 @@ describe("Log In", () => {
         
 
     })
-    it("can fill out the form", () => {
+    it("can fill out the form and login", () => {
         user.visit("/")
         user.findByPlaceholderText(/email/i).type("jongho.han@daum.net")    
         user.findByPlaceholderText(/password/i).type("123123123")
         user.findByRole("button").should("not.have.class", "pointer-events-none").click()
         user.window().its("localStorage.nuber-token").should("be.a", "string")
     });
-    it("sign up", () => {
-        user.visit("/create-account")
-    })
+    
 })
