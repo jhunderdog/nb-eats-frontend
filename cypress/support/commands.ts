@@ -41,9 +41,8 @@ Cypress.Commands.add("login", (email, password) => {
     cy.title().should("eq", "Login | Nuber Eats");
     cy.findByPlaceholderText(/email/i).type(email)    
     cy.findByPlaceholderText(/password/i).type(password)
-    cy.wait(1000);
-    cy.findByRole("button", {timeout: 10000})
-    .should("not.have.class", "pointer-events-none", {timeout: 10000})
+    cy.findByRole("button")
+    .should("not.have.class", "pointer-events-none")
     .click()
     //@ts-ignore
     cy.assertLoggedIn();

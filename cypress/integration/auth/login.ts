@@ -23,7 +23,7 @@ describe("Log In", () => {
     })
     it("can fill out the form and login", () => {
         //@ts-ignore
-        user.login("nico@nomadcoders.co", "121212");
+        user.login("33382water@daum.net", "123123123");
     });
     
 })

@@ -35,7 +35,7 @@ describe("Create Account", () => {
         user.findByRole("button").click();
         user.wait(1000)
         //@ts-ignore
-        user.login("nico@nomadcoders.co", "121212")
+        user.login("33382water@daum.net", "123123123")
       
     })
 })
