@@ -4,7 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import { DISH_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragments";
 import { myRestaurant, myRestaurantVariables } from "../../__generated__/myRestaurant";
 
-const MY_RESTAURANTS_QUERY = gql`
+export const MY_RESTAURANT_QUERY = gql`
     query myRestaurant($input: MyRestaurantInput!){
         myRestaurant(input: $input){
             ok
@@ -28,7 +28,7 @@ interface IParams {
 export const MyRestaurant = () => {
     const {id} = useParams<IParams>();
     const { data } = useQuery<myRestaurant, myRestaurantVariables>(
-        MY_RESTAURANTS_QUERY,
+        MY_RESTAURANT_QUERY,
         {variables: {
             input: {
                 id: +id,
@@ -47,7 +47,7 @@ export const MyRestaurant = () => {
                 <h2 className="text-4xl font-medium mb-10">
                     {data?.myRestaurant.restaurant?.name || "Loading..."}
                 </h2>
-                <Link to={``} className="mr-8 text-white bg-gray-800 py-3 px-10">
+                <Link to={`/restaurants/${id}/add-dish`} className="mr-8 text-white bg-gray-800 py-3 px-10">
                     Add Dish &rarr;
                 </Link>
                 <Link to={``} className="text-white bg-lime-700 py-3 px-10">
