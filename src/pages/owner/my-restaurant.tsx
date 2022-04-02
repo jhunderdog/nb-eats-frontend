@@ -5,6 +5,8 @@ import { Dish } from "../../components/dish";
 import { DISH_FRAGMENT, ORDER_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragments";
 import { myRestaurant, myRestaurantVariables } from "../../__generated__/myRestaurant";
 import { VictoryBar, VictoryChart, VictoryAxis, VictoryPie, VictoryVoronoiContainer, VictoryLine, VictoryZoomContainer, VictoryTheme, VictoryLabel, VictoryTooltip } from 'victory';
+import { Helmet } from "react-helmet-async";
+import { useMe } from "../../hooks/useMe";
 
 export const MY_RESTAURANT_QUERY = gql`
     query myRestaurant($input: MyRestaurantInput!){
@@ -56,8 +58,26 @@ export const MyRestaurant = () => {
         { x:11 , y: 443},
 
     ];
+    const { data: userData} = useMe()
+    const triggerPaddle = () => {
+      if(userData?.me.email){
+        //@ts-ignore
+        console.log(window.Paddle);
+        //@ts-ignore
+        window.Paddle.Setup({vendor: 144555});
+        //@ts-ignore
+        window.Paddle.Checkout.open({product: 763344, email: userData.me.email});
+      }
+    };
     return (
-        <div>
+      <div>
+        <Helmet>
+          <title>
+          {data?.myRestaurant.restaurant?.name || "Loading..."} | Nuber Eats
+          </title>
+          <script src="https://cdn.paddle.com/paddle/paddle.js"></script>
+          </Helmet>
+        <div className="checkout-container"></div>
             <div
             className="bg-gray-700 py-28 bg-center bg-cover"
             style={{
@@ -70,14 +90,14 @@ export const MyRestaurant = () => {
                 <Link to={`/restaurants/${id}/add-dish`} className="mr-8 text-white bg-gray-800 py-3 px-10">
                     Add Dish &rarr;
                 </Link>
-                <Link to={``} className="text-white bg-lime-700 py-3 px-10">
+                <span onClick={triggerPaddle} className=" cursor-pointer text-white bg-lime-700 py-3 px-10">
                     Buy Promotion &rarr;
-                </Link>
+                </span>
                 <div className="mt-10">
                 {data?.myRestaurant.restaurant?.menu.length === 0 ? (<h4 className="text-xl mb-5">Please upload a dish!</h4>) :
                 (<div className="grid mt-16 md:grid-cols-3 gap-x-5 gap-y-10">
-                    {data?.myRestaurant.restaurant?.menu.map((dish)=> (
-                        <Dish name={dish.name} description={dish.description} price={dish.price}/>
+                    {data?.myRestaurant.restaurant?.menu.map((dish, index)=> (
+                        <Dish key={index} name={dish.name} description={dish.description} price={dish.price}/>
                     ))}
                     </div>
                         )
