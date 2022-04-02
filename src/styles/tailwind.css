@@ -14,7 +14,7 @@
 }
 
 .btn {
-  @apply mt-3 text-lg font-medium text-white py-4 bg-lime-600 hover:bg-green-700 transition-colors;
+  @apply mt-3 text-lg font-medium text-white py-4 bg-lime-600 hover:bg-green-700 transition-colors ;
 }
 
 @tailwind utilities;
