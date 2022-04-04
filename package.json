@@ -31,6 +31,7 @@
     "react-helmet": "^6.1.0",
     "postcss": "^8.1.9",
     "rimraf": "^3.0.2",
+    "subscriptions-transport-ws": "^0.9.18",
     "cypress": "^6.0.1",
     "victory": "^35.4.2"
   },
