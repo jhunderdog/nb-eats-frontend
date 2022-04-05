@@ -1,6 +1,6 @@
 import { gql, useQuery, useSubscription } from "@apollo/client";
 import { orderBy } from "cypress/types/lodash";
-import React from "react";
+import React, { useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { useParams } from "react-router-dom";
 import { FULL_ORDER_FRAGMENT } from "../fragments";
@@ -39,20 +39,48 @@ interface IParams {
 
 export const Order = () => {
     const params = useParams<IParams>();
-    const { data } = useQuery<getOrder, getOrderVariables>(GET_ORDER, {variables: {
+    const { data, subscribeToMore } = useQuery<getOrder, getOrderVariables>(GET_ORDER, {variables: {
         input: {
             id: +params.id
         }
     }});
-    const { data: subscriptionData } = useSubscription<orderUpdates, orderUpdatesVariables>(ORDER_SUBSCRIPTION, {
-        variables: {
-            input: {
-                id: +params.id,
-            }
+    useEffect(() => {
+        if(data?.getOrder.ok){
+            subscribeToMore({
+                document: ORDER_SUBSCRIPTION,
+                variables: {
+                    input: {
+                        id: +params.id,
+                    }
+                },
+                updateQuery: (
+                    prev, 
+                    {
+                        subscriptionData: {data}, 
+                    }: {subscriptionData: {data:orderUpdates}}
+                    ) => {
+                        if(!data) return prev
+                        return {
+                            getOrder: {
+                                ...prev.getOrder,
+                                order: {
+                                    ...data.orderUpdates
+                                }
+                            }
+                        }
+                    }
+            })
         }
-    });
-    console.log(data);
-    console.log(subscriptionData);
+    }, [data])
+    // const { data: subscriptionData } = useSubscription<orderUpdates, orderUpdatesVariables>(ORDER_SUBSCRIPTION, {
+    //     variables: {
+    //         input: {
+    //             id: +params.id,
+    //         }
+    //     }
+    // });
+    // console.log(data);
+    // console.log(subscriptionData);
     return (
         <div className="mt-32 container flex justify-center">
             <Helmet>
