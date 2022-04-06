@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { useParams } from "react-router-dom";
 import { FULL_ORDER_FRAGMENT } from "../fragments";
+import { useMe } from "../hooks/useMe";
 import { getOrder, getOrderVariables } from "../__generated__/getOrder";
 import { orderUpdates, orderUpdatesVariables } from "../__generated__/orderUpdates";
 
@@ -39,6 +40,7 @@ interface IParams {
 
 export const Order = () => {
     const params = useParams<IParams>();
+    const { data: userData } = useMe();
     const { data, subscribeToMore } = useQuery<getOrder, getOrderVariables>(GET_ORDER, {variables: {
         input: {
             id: +params.id
@@ -56,7 +58,7 @@ export const Order = () => {
                 updateQuery: (
                     prev, 
                     {
-                        subscriptionData: {data}, 
+                        subscriptionData: {data}
                     }: {subscriptionData: {data:orderUpdates}}
                     ) => {
                         if(!data) return prev
@@ -65,7 +67,7 @@ export const Order = () => {
                                 ...prev.getOrder,
                                 order: {
                                     ...data.orderUpdates
-                                }
+                                } //overiding
                             }
                         }
                     }
@@ -113,9 +115,17 @@ export const Order = () => {
                         </span>
                     </div>
                     <div>
-                        <span className=" text-center mt-5 mb-3 text-2xl text-lime-600">
+                        {userData?.me.role === "Client"  && (<span className=" text-center mt-5 mb-3 text-2xl text-lime-600">
                             Status: {data?.getOrder.order?.status}
-                        </span>
+                        </span>)}
+                        {userData?.me.role === "Owner" && <>
+                        {data?.getOrder.order?.status === "Pending" && (
+                            <button className="btn">Accept Order</button>
+                        )}
+                        {data?.getOrder.order?.status === "Cooking" && (
+                            <button className="btn">Order Cooked</button>
+                        )}
+                        </>}
                     </div>
                 </div>
             </div>
