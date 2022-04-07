@@ -33,7 +33,9 @@
     "rimraf": "^3.0.2",
     "subscriptions-transport-ws": "^0.9.18",
     "cypress": "^6.0.1",
-    "victory": "^35.4.2"
+    "victory": "^35.4.2",
+    "@types/google-map-react": "^2.1.0",
+    "google-map-react": "^2.1.9"
   },
   "scripts": {
     "tailwind:build": "tailwind build ./src/styles/tailwind.css -o ./src/styles/styles.css",
